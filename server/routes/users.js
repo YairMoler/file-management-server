@@ -1,23 +1,22 @@
 var express = require("express");
 const fs = require("fs");
 const path = require("path");
+const sendDir = require("../utils/sendDir");
+const isFolder = require("../utils/isFolder");
 var router = express.Router();
 
 /* GET users listing. */
 router.get("/:username", function (req, res, next) {
-    console.log("req.params.username: ", req.params.username);
-    let filesArr;
-    fs.readdir(dirPath, { withFileTypes: true }, (err, files) => {
-        if (err) return console.log(err);
-        filesArr = files.map((file) => {
-            return {
-                name: file.name,
-                type: file.isDirectory() ? "folder" : "file",
-            };
-        });
-        res.json(filesArr);
-    });
-    res.send(JSON.stringify(filesArr));
+    const dirPath = path.normalize(`${__dirname}/../users/${req.params.username}`);
+    sendDir(res, dirPath);
 });
 
+router.get("/:username/*", async (req, res, next) => {
+    const dirPath = path.normalize(`${__dirname}/../users/${req.url}`);
+    if (await isFolder(dirPath)) {
+        sendDir(res, dirPath);
+    }
+    console.log("hi");
+    res.sendFile(dirPath);
+});
 module.exports = router;
