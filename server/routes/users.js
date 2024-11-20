@@ -1,20 +1,29 @@
 const { dir } = require('console');
-var express = require('express');
+var express = require("express");
+const fs = require("fs");
+const path = require("path");
+const sendDir = require("../utils/sendDir");
+const isFolder = require("../utils/isFolder");
 var router = express.Router();
 const fs = require('fs');
 const fs2 = require('node:fs');
 const path = require('path');
 
 /* GET users listing. */
-router.get('/:username', (req, res) => {
-  const username = req.params.username;
-  const filePath = path.join(__dirname, "..", `users/${username}`)
-  const files = fs.readdirSync(filePath)
-  if(files.length === 0){
-    return res.status(400).send('this username is not exist')
-  }
-  res.send(files);
+router.get("/:username", function (req, res, next) {
+    const dirPath = path.normalize(`${__dirname}/../users/${req.params.username}`);
+    sendDir(res, dirPath);
 });
+
+router.get("/:username/*", async (req, res, next) => {
+    const dirPath = path.normalize(`${__dirname}/../users/${req.url}`);
+    if (await isFolder(dirPath)) {
+        sendDir(res, dirPath);
+    }
+    console.log("hi");
+    res.sendFile(dirPath);
+});
+
 router.post('/:username', (req, res) => {
   const username = req.params.username;
   const filePath = path.join(__dirname, "..", `users/${username}`)
@@ -45,58 +54,6 @@ router.post('/:username', (req, res) => {
   }
 })
 
-// const isFolderExist = (folderName, filePath) => {
-//   const files = fs.readdirSync(`${filePath}`)
-//   files.forEach((file) => {
-//     const stats = fs2.statSync(file)
-//     if (stats.isDirectory() && file === folderName)
-//       return true
-//   })
-//   return false;
-// }
-
-// const isFileExist = (fileName, filePath) => {
-//   const files = fs.readdirSync(`${filePath}`)
-//   files.forEach((file) => {
-//     const stats = fs2.statSync(file)
-//     if (stats.isFile() && file === fileName)
-//       return true
-//   })
-//   return false;
-// }
-
-router.delete(':username/:fileName', (req, res) => {
-  const username = req.params.username;
-  const filePath = path.join(__dirname, "..", `users/${username}`);
-  const files = fs.readdirSync(`${filePath}`)
-  const file = files.find(f => f === req.params.fileName)
-  if (!file) return res.status(404).send('this file is not exist')
-  const dirPath = path.join(__dirname, "..", `users/${username}/${req.params.fileName}`);
-  const type = req.body.type;
-  if (type === 'folder') {
-    const insideFolder = fs.readdirSync(dirPath)
-    if (insideFolder.length === 0) {
-      fs.rmdir(dirPath, (err) => {
-        if (err) {
-          return res.status(404).send('something went wrong')
-        }
-        res.send('folder deleted')
-      })
-    }
-    else {
-      deleteFolderRecursive(dirPath);
-    }
-  }
-  res.send(req.body.name)
-})
-
-const deleteFolderRecursive = (dirPath) => {
-  const insideFolder = fs.readdirSync(dirPath)
-  insideFolder.forEach(file => {
-
-  })
-}
-
 router.put('/:username/:fileName', (req, res) => {
   const username = req.params.username;
   const fileName = req.params.fileName;
@@ -113,5 +70,4 @@ router.put('/:username/:fileName', (req, res) => {
   }) 
   res.send('file updated')
 })
-
 module.exports = router;
