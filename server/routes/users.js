@@ -6,7 +6,7 @@ const sendDir = require("../utils/sendDir");
 const { isFolder, doesExist } = require("../utils/isFolder");
 var router = express.Router();
 
-/* GET users listing. */
+/* GET method*/
 router.get("/:username/*", async (req, res, next) => {
     const dirPath = path.normalize(`${__dirname}/../users/${req.url}`);
     if (!(await doesExist(dirPath))) return res.status(404).send("does not exist");
@@ -17,6 +17,7 @@ router.get("/:username/*", async (req, res, next) => {
     res.sendFile(dirPath);
 });
 
+/* POST Method*/
 router.post("/:username/*", (req, res) => {
     const filePath = path.normalize(`${__dirname}/../users/${req.url}`);
     console.log("filePath: ", filePath);
@@ -47,6 +48,7 @@ router.post("/:username/*", (req, res) => {
     }
 });
 
+/* PATCH method*/
 router.patch("/:username/*", (req, res) => {
     const filePath = path.normalize(`${__dirname}/../users/${req.url}`);
     console.log("filePath: ", filePath);
@@ -61,8 +63,8 @@ router.patch("/:username/*", (req, res) => {
     });
     res.send("file updated");
 });
-module.exports = router;
 
+/* DELETE method*/
 router.delete("/:username/*", async (req, res) => {
     const filePath = path.normalize(`${__dirname}/../users/${req.url}`);
     console.log("filePath: ", filePath);
@@ -87,3 +89,5 @@ router.delete("/:username/*", async (req, res) => {
     });
     res.send("deleted successfully").end();
 });
+
+module.exports = router;
