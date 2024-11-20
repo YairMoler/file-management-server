@@ -1,14 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import File from "../components/File";
 import { API_URL } from "../functions/API_URL";
-export default function Home({ currentUser }) {
+import Folder from "../components/Folder";
+import { FolderUrlContext } from "../contexts/FolderUrContext";
+export default function Home() {
     const [error, setError] = useState(null);
     const [files, setFiles] = useState([]);
+    const [newFileName, setNewFileName] = useState('');
+    const [isFileAdd, setIsFileAdd] = useState(false);
+    const { username } = useParams();
+    const { folderUrl, setFolderUrl } = useContext(FolderUrlContext)
+
     useEffect(() => {
+        getFiles()
+
+    }, []);
+    const getFiles = async () => {
         try {
-            const response = (async () => await fetch(`${API_URL}/users/${currentUser.username}`))();
+            const response = await fetch(`${API_URL}/users/${username}`);
+            console.log(response)
             if (!response.ok) throw Error("Did not receive expected data");
-            const data = (async () => await response.json());
+            const data = await response.json();
             if (data.length === 0) setError(`You have no files`);
             else {
                 setFiles(data);
@@ -17,13 +30,128 @@ export default function Home({ currentUser }) {
         } catch (err) {
             setError(err.message);
         }
+    }
+    const showFolderContent = async (folder) => {
+        try {
+            const response = await fetch(`${API_URL}/users/${username}${folderUrl}/${folder.name}`);
+            console.log(response)
+            if (!response.ok) throw Error("Did not receive expected data");
+            const data = await response.json();
+            console.log(data)
+            if (data.length === 0) {
+                setError('this folder is empty');
+            }
+            else {
+                setFolderUrl(prev => {
+                    if (prev === '/')
+                        return prev + `${folder.name}`
+                    else
+                        return prev + `/${folder.name}`
+                })
+                setFiles(data)
+                setError(null);
+            }
+        } catch (err) {
+            setError(err.message);
+        }
+    }
+    const saveChanges = async (file, updatedName, setIsEdit) => {
+        try {
+            let url = '';
+            if (folderUrl === '/')
+                url = `${API_URL}/users/${username}/${file.name}`;
+            else {
+                url = `${API_URL}/users/${username}${folderUrl}/${file.name}`;
+            }
+            const updatedFile = {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: updatedName,
+                }),
+            };
+            const response = await fetch(url, updatedFile)
+            if (!response.ok) throw Error("Did not receive expected data");
+            const data = await response.text();
+            const fileIndex = files.findIndex(item => item.name === file.name);
+            const newFiles = files;
+            newFiles[fileIndex].name = updatedName;
+            setFiles(newFiles)
+            setIsEdit(false);
+            setError(null);
+        } catch (err) {
+            setError(err.message);
+        }
+    }
+    const deleteFile = async (file) => {
+        try {
+            const deleteOption = {
+                method: "DELETE",
+            };
+            let url = '';
+            if (folderUrl === '/')
+                url = `${API_URL}/users/${username}/${file.name}`;
+            else {
+                url = `${API_URL}/users/${username}${folderUrl}/${file.name}`;
+            }
+            await apiRequest(url, deleteOption);
+            if (!response.ok) throw Error("Did not receive expected data");
+            const newList = files.filter((item) => item.name !== file.name);
+            setFiles(newList);
+            setError(null);
+        }
+        catch (err) {
+            setError(err.errMsg);
+        }
 
-    }, []);
+    }
+
+    const postFileRequest = async () => {
+        try {
+            const newFile = {
+                name: newFileName,
+                type: "file"
+            }
+            const postOption = {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newObj),
+            };
+            let url = '';
+            if (folderUrl === '/')
+                url = `${API_URL}/users/${username}/${file.name}`;
+            else {
+                url = `${API_URL}/users/${username}${folderUrl}/${file.name}`;
+            }
+            const result = await apiRequest(url, postOption);
+            if (!response.ok) throw Error("Did not receive expected data");
+            const newList = files;
+            newList.push(postOption);
+            setError(null)
+            setFiles(newList);
+            setIsFileAdd(false)
+        } catch (err) {
+            setError(err.errMsg);
+        }
+
+    }
     return (
-        <div>
-            {files.map((file) => {
-                <div>{file}</div>
-            })}
-        </div>
+        <main>
+            <button onClick={() => setIsFileAdd(true)}>add file</button>
+            {isFileAdd && <form>
+                <input value={newFileName} onChange={(e) => setNewFileName(e.target.value)} />
+                <button onClick={postFileRequest}>save</button>
+            </form>}
+            <div className="files-container">
+                {files.map((file) => {
+                    return (file.type === 'folder' ?
+                        <Folder key={file.name} folder={file} showFolderContent={showFolderContent} deleteFolder={deleteFile} saveChanges={saveChanges} /> :
+                        <File key={file.name} file={file} deleteFile={deleteFile} saveChanges={saveChanges} />)
+                })}
+                <p>{error}</p>
+            </div>
+        </main>
     )
 }

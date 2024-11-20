@@ -40,3 +40,44 @@
 .read-the-docs {
   color: #888;
 }
+
+.files-container{
+  display: flex;
+  flex-wrap: wrap;
+  width: 90vw;
+  justify-content: space-around;
+  height: 100vh;
+}
+h1{
+  font-size: 25px;
+}
+.actions-buttons{
+  display: flex;
+  flex-wrap: wrap;
+  width: 25vw;
+  font-size: 13px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+.actions-buttons button {
+
+}
+.folder-div{
+  background-color: rgb(168, 168, 168);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.file-div{
+  background-color: whitesmoke;
+  margin-bottom: 10px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}

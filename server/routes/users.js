@@ -5,9 +5,7 @@ const path = require("path");
 const sendDir = require("../utils/sendDir");
 const isFolder = require("../utils/isFolder");
 var router = express.Router();
-const fs = require('fs');
 const fs2 = require('node:fs');
-const path = require('path');
 
 /* GET users listing. */
 router.get("/:username", function (req, res, next) {
@@ -54,7 +52,7 @@ router.post('/:username', (req, res) => {
   }
 })
 
-router.put('/:username/:fileName', (req, res) => {
+router.patch('/:username/:fileName', (req, res) => {
   const username = req.params.username;
   const fileName = req.params.fileName;
   const filePath = path.join(__dirname, "..", `users/${username}`);

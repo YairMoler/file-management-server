@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 // import { fetchData } from "../functions/fetchdata";
 
-export default function Login({setCurrentUser}) {
+export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
-    const userId = useParams();
     const navigate = useNavigate();
 
     
@@ -32,7 +31,6 @@ export default function Login({setCurrentUser}) {
         }
         else{
             setError(null)
-            setCurrentUser(user);
             navigate(`/${user.username}`);
         }
 
@@ -60,14 +58,14 @@ export default function Login({setCurrentUser}) {
     return (
         <form method="POST" action="/login" className="login-form" onSubmit={handleSubmit}>
             <h1 className="inside-form">Login</h1>
-            <label className="inside-form">Username:</label>
+            <label className="inside-form">Username:</label><br/>
             <input
                 className="inside-form"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
             />
             <br />
-            <label className="inside-form">Password:</label>
+            <label className="inside-form">Password:</label><br/>
             <input
                 className="inside-form"
                 value={password}
@@ -76,9 +74,9 @@ export default function Login({setCurrentUser}) {
             <br />
             <button className="inside-form">Submit</button>
             <br />
-            <Link className="inside-form" to="/register">
+            {/* <Link className="inside-form" to="/register">
                 Sign Up
-            </Link>
+            </Link> */}
             <p className="inside-form">{error}</p>
         </form>
     );
