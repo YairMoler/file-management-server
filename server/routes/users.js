@@ -10,8 +10,15 @@ router.get("/:username", function (req, res, next) {
   sendDir(res, dirPath);
 });
 /* GET method*/
+router.get("/:username", async (req, res, next) => {
+    const dirPath = path.normalize(`${__dirname}/../users/${req.params.username}`);
+    if (!(await doesExist(dirPath))) return res.status(404).send("does not exist");
+    sendDir(res, dirPath);
+});
+
 router.get("/:username/*", async (req, res, next) => {
     const dirPath = path.normalize(`${__dirname}/../users/${req.url}`);
+    console.log("dirPath: ", dirPath);
     if (!(await doesExist(dirPath))) return res.status(404).send("does not exist");
     if (await isFolder(dirPath)) {
         sendDir(res, dirPath);
