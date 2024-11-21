@@ -10,10 +10,6 @@ import Home from './pages/Home';
 import SpecificFile from './pages/SpecificFile';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState({});
-  const [folderUrl, setFolderUrl] = useState('/')
-
-
   return (
     <>
       <FolderUrlProvider>
@@ -21,8 +17,8 @@ function App() {
           <Routes>
             <Route path="/">
               <Route index element={<Login />} />
-              <Route path=':username' element={<Home setFolderUrl={setFolderUrl} folderUrl={folderUrl} />} />
-              <Route path=':username/:fileName' element={<SpecificFile folderUrl={folderUrl} />} />
+              <Route path=':username' element={<Home/>} />
+              <Route path=':username/:fileName' element={<SpecificFile  />} />
             </Route>
           </Routes>
         </Router>

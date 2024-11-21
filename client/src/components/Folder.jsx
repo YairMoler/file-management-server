@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { FolderUrlContext } from "../contexts/FolderUrContext";
 import { API_URL } from '../functions/API_URL';
 

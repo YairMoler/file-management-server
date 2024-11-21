@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import File from "../components/File";
 import { API_URL } from "../functions/API_URL";
 import Folder from "../components/Folder";
@@ -106,8 +106,9 @@ export default function Home() {
         }
     };
 
-    const postFileRequest = async () => {
+    const postFileRequest = async (e) => {
         try {
+            e.preventDefault();
             const newFile = {
                 name: newFileName,
                 type: "file",
@@ -122,13 +123,14 @@ export default function Home() {
             else {
                 url = `${API_URL}/users/${username}${folderUrl}`;
             }
-            const response = await fetch(url, postOption);
+            console.log("hello");
+            const response = await fetch(url, newFile);
             console.log("response: ", response);
 
             if (!response.ok) throw await response.text();
             const newList = files;
             console.log(newList);
-            newList.push(postOption);
+            newList.push(newFile);
             console.log("newList: ", newList);
             setError(null);
             setFiles(newList);
@@ -147,17 +149,17 @@ export default function Home() {
                 </form>
             )}
             <div className="files-container">
-                {files.map((file) => {
+                {files.map((file, index) => {
                     return file.type === "folder" ? (
                         <Folder
-                            key={file.name}
+                            key={`${file.name}.${index}`}
                             folder={file}
                             showFolderContent={showFolderContent}
                             deleteFolder={deleteFile}
                             saveChanges={saveChanges}
                         />
                     ) : (
-                        <File key={file.name} file={file} deleteFile={deleteFile} saveChanges={saveChanges} />
+                        <File key={`${file.name}.${index}`} file={file} deleteFile={deleteFile} saveChanges={saveChanges} />
                     );
                 })}
                 <p>{error}</p>

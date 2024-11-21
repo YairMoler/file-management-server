@@ -13,6 +13,7 @@ export default function File({file, deleteFile, saveChanges}) {
 
 
     const showFileContent = () => {
+        console.log("asd")
         navigate(`/${username}/${file.name}`);
     }
     const renameFile = () => {
