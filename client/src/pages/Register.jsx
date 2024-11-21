@@ -30,9 +30,8 @@ export default function Register() {
         else {
             try {
                 const newUser = {
-                    id: randomNum.toString(),
                     username: username,
-                    website: password,
+                    password: password,
                 };
 
                 const postOption = {
@@ -40,7 +39,7 @@ export default function Register() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(newUser),
                 };
-                const result = await fetch(`${API_URL}/register`, postOption);
+                const result = await fetch(`${API_URL}/registration`, postOption);
                 if (!result.ok) throw Error('register fail')
                 const data = await result.json();
                 if (data) {
@@ -48,6 +47,7 @@ export default function Register() {
                     navigate(`/${username}`)
                 }
             } catch (err) {
+                console.log(err)
                 setError(err)
             }
         }
