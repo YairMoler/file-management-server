@@ -30,7 +30,7 @@ export default function Register() {
             try {
                 const newUser = {
                     username: username,
-                    website: password,
+                    password: password,
                 };
 
                 const postOption = {
@@ -46,6 +46,7 @@ export default function Register() {
                     navigate(`/${username}`);
                 }
             } catch (err) {
+                console.log(err);
                 setError(err);
             }
         }

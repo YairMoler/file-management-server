@@ -24,6 +24,7 @@ export default function Home() {
             console.log(response)
             if (!response.ok) throw Error("Did not receive expected data");
             const data = await response.json();
+            console.log('data: ', data);
             if (data.length === 0) setError(`You have no files`);
             else {
                 setFiles(data);
@@ -41,18 +42,20 @@ export default function Home() {
             const data = await response.json();
             console.log(data)
             if (data.length === 0) {
+                setFiles([]);
                 setError('this folder is empty');
             }
             else {
-                setFolderUrl(prev => {
-                    if (prev === '/')
-                        return prev + `${folder.name}`
-                    else
-                        return prev + `/${folder.name}`
-                })
                 setFiles(data)
                 setError(null);
             }
+            setFolderUrl(prev => {
+                if (prev === '/')
+                    return prev + `${folder.name}`
+                else
+                    return prev + `/${folder.name}`
+            })
+
         } catch (err) {
             setError(err.message);
         }
@@ -101,7 +104,7 @@ export default function Home() {
             const response = await fetch(url, deleteOption);
             console.log('response: ', response);
 
-            if (!response.ok) throw Error("Did not receive expected data");
+            if (!response.ok) throw await response.text();
 
             const newList = files.filter((item) => item.name !== file.name);
             setFiles(newList);
