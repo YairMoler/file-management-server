@@ -7,19 +7,18 @@ import { FolderUrlContext } from "../contexts/FolderUrContext";
 export default function Home() {
     const [error, setError] = useState(null);
     const [files, setFiles] = useState([]);
-    const [newFileName, setNewFileName] = useState('');
+    const [newFileName, setNewFileName] = useState("");
     const [isFileAdd, setIsFileAdd] = useState(false);
     const { username } = useParams();
-    const { folderUrl, setFolderUrl } = useContext(FolderUrlContext)
+    const { folderUrl, setFolderUrl } = useContext(FolderUrlContext);
 
     useEffect(() => {
-        (async () => await getFiles())()
-
+        (async () => await getFiles())();
     }, []);
     const getFiles = async () => {
         try {
             const response = await fetch(`${API_URL}/users/${username}`);
-            console.log(response)
+            console.log(response);
             if (!response.ok) throw Error("Did not receive expected data");
             const data = await response.json();
             if (data.length === 0) setError(`You have no files`);
@@ -30,36 +29,32 @@ export default function Home() {
         } catch (err) {
             setError(err.message);
         }
-    }
+    };
     const showFolderContent = async (folder) => {
         try {
             const response = await fetch(`${API_URL}/users/${username}${folderUrl}/${folder.name}`);
-            console.log(response)
+            console.log(response);
             if (!response.ok) throw Error("Did not receive expected data");
             const data = await response.json();
-            console.log(data)
+            console.log(data);
             if (data.length === 0) {
-                setError('this folder is empty');
-            }
-            else {
-                setFolderUrl(prev => {
-                    if (prev === '/')
-                        return prev + `${folder.name}`
-                    else
-                        return prev + `/${folder.name}`
-                })
-                setFiles(data)
+                setError("this folder is empty");
+            } else {
+                setFolderUrl((prev) => {
+                    if (prev === "/") return prev + `${folder.name}`;
+                    else return prev + `/${folder.name}`;
+                });
+                setFiles(data);
                 setError(null);
             }
         } catch (err) {
             setError(err.message);
         }
-    }
+    };
     const saveChanges = async (file, updatedName, setIsEdit) => {
         try {
-            let url = '';
-            if (folderUrl === '/')
-                url = `${API_URL}/users/${username}/${file.name}`;
+            let url = "";
+            if (folderUrl === "/") url = `${API_URL}/users/${username}/${file.name}`;
             else {
                 url = `${API_URL}/users/${username}${folderUrl}/${file.name}`;
             }
@@ -72,92 +67,101 @@ export default function Home() {
                     name: updatedName,
                 }),
             };
-            const response = await fetch(url, updatedFile)
-            if (!response.ok) throw Error("Did not receive expected data");
+            const response = await fetch(url, updatedFile);
+            if (!response.ok) throw await response.text();
             const data = await response.text();
-            const fileIndex = files.findIndex(item => item.name === file.name);
+            const fileIndex = files.findIndex((item) => item.name === file.name);
             const newFiles = files;
             newFiles[fileIndex].name = updatedName;
-            setFiles(newFiles)
+            setFiles(newFiles);
             setIsEdit(false);
             setError(null);
         } catch (err) {
-            setError(err.message);
+            setError(err);
         }
-    }
+    };
     const deleteFile = async (file) => {
         try {
             const deleteOption = {
                 method: "DELETE",
             };
-            let url = '';
-            if (folderUrl === '/')
-                url = `${API_URL}/users/${username}/${file.name}`;
+            let url = "";
+            if (folderUrl === "/") url = `${API_URL}/users/${username}/${file.name}`;
             else {
                 url = `${API_URL}/users/${username}${folderUrl}/${file.name}`;
             }
             const response = await fetch(url, deleteOption);
-            console.log('response: ', response);
-            if (!response.ok) throw Error("Did not receive expected data");
+
+            if (!response.ok) {
+                throw await response.text();
+            }
+
             const newList = files.filter((item) => item.name !== file.name);
             setFiles(newList);
             setError(null);
-        }
-        catch (err) {
-            console.log('err: ', err);
+        } catch (err) {
+            console.log("here");
+            console.log("err: ", err);
             setError(err);
         }
-
-    }
+    };
 
     const postFileRequest = async () => {
         try {
             const newFile = {
                 name: newFileName,
-                type: "file"
-            }
+                type: "file",
+            };
             const postOption = {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(newFile),
             };
-            let url = '';
-            if (folderUrl === '/')
-                url = `${API_URL}/users/${username}/`;
+            let url = "";
+            if (folderUrl === "/") url = `${API_URL}/users/${username}/`;
             else {
                 url = `${API_URL}/users/${username}${folderUrl}`;
             }
             const response = await fetch(url, postOption);
-            console.log('response: ', response);
+            console.log("response: ", response);
 
-            if (!response.ok) throw Error("Did not receive expected data");
+            if (!response.ok) throw await response.text();
             const newList = files;
             console.log(newList);
             newList.push(postOption);
-            console.log('newList: ', newList);
-            setError(null)
+            console.log("newList: ", newList);
+            setError(null);
             setFiles(newList);
-            setIsFileAdd(false)
+            setIsFileAdd(false);
         } catch (err) {
-            setError(err.errMsg);
+            setError(err);
         }
-
-    }
+    };
     return (
         <main>
             <button onClick={() => setIsFileAdd(true)}>add file</button>
-            {isFileAdd && <form>
-                <input value={newFileName} onChange={(e) => setNewFileName(e.target.value)} />
-                <button onClick={postFileRequest}>save</button>
-            </form>}
+            {isFileAdd && (
+                <form>
+                    <input value={newFileName} onChange={(e) => setNewFileName(e.target.value)} />
+                    <button onClick={postFileRequest}>save</button>
+                </form>
+            )}
             <div className="files-container">
                 {files.map((file) => {
-                    return (file.type === 'folder' ?
-                        <Folder key={file.name} folder={file} showFolderContent={showFolderContent} deleteFolder={deleteFile} saveChanges={saveChanges} /> :
-                        <File key={file.name} file={file} deleteFile={deleteFile} saveChanges={saveChanges} />)
+                    return file.type === "folder" ? (
+                        <Folder
+                            key={file.name}
+                            folder={file}
+                            showFolderContent={showFolderContent}
+                            deleteFolder={deleteFile}
+                            saveChanges={saveChanges}
+                        />
+                    ) : (
+                        <File key={file.name} file={file} deleteFile={deleteFile} saveChanges={saveChanges} />
+                    );
                 })}
                 <p>{error}</p>
             </div>
         </main>
-    )
+    );
 }

@@ -5,7 +5,7 @@ const sendDir = (res, dirPath) => {
     fs.readdir(dirPath, { withFileTypes: true }, (err, files) => {
         if (err) {
             console.log("err: ", err);
-            return res.status(404).send("folder do not exist");
+            return res.status(404).send(err);
         }
         filesArr = files.map((file) => {
             return {
