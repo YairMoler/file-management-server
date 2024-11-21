@@ -8,33 +8,26 @@ export default function Login() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    
-
     async function handleSubmit(e) {
         e.preventDefault();
         const user = { username: username, password: password };
-        const result = await fetch('http://localhost:3000/login', {
+        const result = await fetch("http://localhost:3000/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": 'http://localhost:5173'
-
+                "Access-Control-Allow-Origin": "http://localhost:5173",
             },
             body: JSON.stringify(user),
-        })
-        console.log(result.status)
-        if(result.status === 400){
-            setError("this user does not exist");
-        }
-        else if(result.status === 404){
+        });
+        console.log(result.status);
+        if (result.status === 400) {
+            setError("username or password are incorrect");
+        } else if (result.status === 404) {
             setError("something went wrong");
-        }
-        else{
-            setError(null)
+        } else {
+            setError(null);
             navigate(`/${user.username}`);
         }
-
-
     }
 
     //   function checkUserData() {
@@ -49,28 +42,22 @@ export default function Login() {
     //   }
 
     useEffect(() => {
-        window.history.pushState(null, '', window.location.href);
+        window.history.pushState(null, "", window.location.href);
         window.onpopstate = function () {
-            window.history.pushState(null, '', window.location.href);
+            window.history.pushState(null, "", window.location.href);
         };
     }, []);
 
     return (
         <form method="POST" action="/login" className="login-form" onSubmit={handleSubmit}>
             <h1 className="inside-form">Login</h1>
-            <label className="inside-form">Username:</label><br/>
-            <input
-                className="inside-form"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-            />
+            <label className="inside-form">Username:</label>
             <br />
-            <label className="inside-form">Password:</label><br/>
-            <input
-                className="inside-form"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
+            <input className="inside-form" value={username} onChange={(e) => setUsername(e.target.value)} />
+            <br />
+            <label className="inside-form">Password:</label>
+            <br />
+            <input className="inside-form" value={password} onChange={(e) => setPassword(e.target.value)} />
             <br />
             <button className="inside-form">Submit</button>
             <br />

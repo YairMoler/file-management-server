@@ -11,7 +11,7 @@ export default function Register() {
 
     const validation = () => {
         if (password !== verifyPassword) {
-            return ("Verified password does not equal to password");
+            return "Verified password does not equal to password";
         }
         if (username.length < 2 || username.length > 15) {
             return "username should be longer than 2 characters and shorter than 15 character";
@@ -20,17 +20,15 @@ export default function Register() {
             return "password should be longer than 2 characters and shorter than 15 character";
         }
         return null;
-    }
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         const valid = validation();
         if (valid !== null) {
             setError(valid);
-        }
-        else {
+        } else {
             try {
                 const newUser = {
-                    id: randomNum.toString(),
                     username: username,
                     website: password,
                 };
@@ -40,32 +38,32 @@ export default function Register() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(newUser),
                 };
-                const result = await fetch(`${API_URL}/register`, postOption);
-                if (!result.ok) throw Error('register fail')
+                const result = await fetch(`${API_URL}/registration`, postOption);
+                if (!result.ok) throw await result.text();
                 const data = await result.json();
                 if (data) {
-                    setError(null)
-                    navigate(`/${username}`)
+                    setError(null);
+                    navigate(`/${username}`);
                 }
             } catch (err) {
-                setError(err)
+                setError(err);
             }
         }
-    }
+    };
     return (
-        <form className="login-form" method='POST' onSubmit={handleSubmit}>
+        <form className="login-form" method="POST" onSubmit={handleSubmit}>
             <h1>Sign Up</h1>
-            <label>Username:</label><br/>
+            <label>Username:</label>
+            <br />
             <input value={username} onChange={(e) => setUsername(e.target.value)} />
             <br />
-            <label>Password:</label><br/>
+            <label>Password:</label>
+            <br />
             <input value={password} onChange={(e) => setPassword(e.target.value)} />
             <br />
-            <label>Verify Password:</label><br/>
-            <input
-                value={verifyPassword}
-                onChange={(e) => setVerifyPassword(e.target.value)}
-            />
+            <label>Verify Password:</label>
+            <br />
+            <input value={verifyPassword} onChange={(e) => setVerifyPassword(e.target.value)} />
             <br />
             <button>Submit</button>
             <br />
