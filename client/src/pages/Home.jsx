@@ -13,7 +13,7 @@ export default function Home() {
     const { folderUrl, setFolderUrl } = useContext(FolderUrlContext)
 
     useEffect(() => {
-        getFiles()
+        (async () => await getFiles())()
 
     }, []);
     const getFiles = async () => {
@@ -96,14 +96,16 @@ export default function Home() {
             else {
                 url = `${API_URL}/users/${username}${folderUrl}/${file.name}`;
             }
-            await apiRequest(url, deleteOption);
+            const response = await fetch(url, deleteOption);
+            console.log('response: ', response);
             if (!response.ok) throw Error("Did not receive expected data");
             const newList = files.filter((item) => item.name !== file.name);
             setFiles(newList);
             setError(null);
         }
         catch (err) {
-            setError(err.errMsg);
+            console.log('err: ', err);
+            setError(err);
         }
 
     }
@@ -117,18 +119,22 @@ export default function Home() {
             const postOption = {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newObj),
+                body: JSON.stringify(newFile),
             };
             let url = '';
             if (folderUrl === '/')
-                url = `${API_URL}/users/${username}/${file.name}`;
+                url = `${API_URL}/users/${username}/`;
             else {
-                url = `${API_URL}/users/${username}${folderUrl}/${file.name}`;
+                url = `${API_URL}/users/${username}${folderUrl}`;
             }
-            const result = await apiRequest(url, postOption);
+            const response = await fetch(url, postOption);
+            console.log('response: ', response);
+
             if (!response.ok) throw Error("Did not receive expected data");
             const newList = files;
+            console.log(newList);
             newList.push(postOption);
+            console.log('newList: ', newList);
             setError(null)
             setFiles(newList);
             setIsFileAdd(false)

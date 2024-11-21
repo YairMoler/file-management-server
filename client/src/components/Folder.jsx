@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { FolderUrlContext } from "../contexts/FolderUrContext";
 import { API_URL } from '../functions/API_URL';
 
-export default function Folder({ folder, showFolderContent, saveChanges }) {
+export default function Folder({ folder, showFolderContent, deleteFolder, saveChanges }) {
     const { username } = useParams();
     const [isEdit, setIsEdit] = useState(false);
     const [error, setError] = useState(null);
@@ -22,7 +22,7 @@ export default function Folder({ folder, showFolderContent, saveChanges }) {
                 <button onClick={() => showFolderContent(folder)}>show</button>
                 {isEdit ? <button onClick={() => saveChanges(folder, updatedName, setIsEdit)}>save</button> : 
                 <button onClick={renameFolder}>rename</button>}
-                <button>delete</button>
+                <button onClick={() => deleteFolder(folder)}>delete</button>
             </div>
             <p>{error}</p>
         </div>

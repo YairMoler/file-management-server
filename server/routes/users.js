@@ -5,7 +5,10 @@ const path = require("path");
 const sendDir = require("../utils/sendDir");
 const { isFolder, doesExist } = require("../utils/isFolder");
 var router = express.Router();
-
+router.get("/:username", function (req, res, next) {
+  const dirPath = path.normalize(`${__dirname}/../users/${req.params.username}`);
+  sendDir(res, dirPath);
+});
 /* GET method*/
 router.get("/:username/*", async (req, res, next) => {
     const dirPath = path.normalize(`${__dirname}/../users/${req.url}`);
