@@ -74,9 +74,9 @@ export default function Login() {
             <br />
             <button className="inside-form">Submit</button>
             <br />
-            {/* <Link className="inside-form" to="/register">
+            <Link className="inside-form" to="/register">
                 Sign Up
-            </Link> */}
+            </Link>
             <p className="inside-form">{error}</p>
         </form>
     );

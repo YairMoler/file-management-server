@@ -1,4 +1,5 @@
 const fs = require("node:fs/promises");
+const fsSync = require("fs")
 
 const isFolder = async (dir) => {
     try {
@@ -10,9 +11,9 @@ const isFolder = async (dir) => {
 };
 const doesExist = async (dir) => {
     try {
-        await fs.stat(dir);
-        return true;
+        return fsSync.existsSync(dir, fs.constants.F_OK);;
     } catch (err) {
+        console.log(err)
         return false;
     }
 };

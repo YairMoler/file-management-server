@@ -1,7 +1,7 @@
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   text-align: center;
 }
 
@@ -47,6 +47,7 @@
   width: 90vw;
   justify-content: space-around;
   height: 100vh;
+  margin-top: 20px;
 }
 h1{
   font-size: 25px;
@@ -54,19 +55,20 @@ h1{
 .actions-buttons{
   display: flex;
   flex-wrap: wrap;
-  width: 25vw;
+  width: 180px;
   font-size: 13px;
   margin-bottom: 10px;
   justify-content: center;
 }
 .actions-buttons button {
-
+  width: 60px;
 }
 .folder-div{
   background-color: rgb(168, 168, 168);
   border-radius: 10px;
   margin-bottom: 10px;
-  height: 200px;
+  height: 30vh;
+  width: 200px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -75,9 +77,24 @@ h1{
 .file-div{
   background-color: whitesmoke;
   margin-bottom: 10px;
-  height: 200px;
+  height: 30vh;
+  width: 200px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+}
+
+header{
+  display: flex;
+  justify-content: center;
+  background-color: rgb(118, 185, 196);
+  width: 100vw;
+  min-height: 80px;
+  align-items: center;
+}
+
+header button {
+  height: 50px;
+  margin-right: 30px;
 }

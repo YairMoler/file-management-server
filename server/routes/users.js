@@ -5,20 +5,14 @@ const path = require("path");
 const sendDir = require("../utils/sendDir");
 const { isFolder, doesExist } = require("../utils/isFolder");
 var router = express.Router();
+
 router.get("/:username", function (req, res, next) {
-    const dirPath = path.normalize(`${__dirname}/../users/${req.params.username}`);
-    sendDir(res, dirPath);
+  const dirPath = path.normalize(`${__dirname}/../users/${req.params.username}`);
+  sendDir(res, dirPath);
 });
 /* GET method*/
-router.get("/:username", async (req, res, next) => {
-    const dirPath = path.normalize(`${__dirname}/../users/${req.params.username}`);
-    if (!(await doesExist(dirPath))) return res.status(404).send("does not exist");
-    sendDir(res, dirPath);
-});
-
 router.get("/:username/*", async (req, res, next) => {
     const dirPath = path.normalize(`${__dirname}/../users/${req.url}`);
-    console.log("dirPath: ", dirPath);
     if (!(await doesExist(dirPath))) return res.status(404).send("does not exist");
     if (await isFolder(dirPath)) {
         sendDir(res, dirPath);
@@ -28,33 +22,36 @@ router.get("/:username/*", async (req, res, next) => {
 });
 
 /* POST Method*/
-router.post("/:username/*", (req, res) => {
+router.post("/:username/*", (req, res, next) => {
     const filePath = path.normalize(`${__dirname}/../users/${req.url}`);
     console.log("filePath: ", filePath);
     console.log("req.body: ", req.body);
     if (!req.body.name || !req.body.type) {
         console.log("no request body");
-        return res.status(400).send("no request body");
+        return res.status(400).send("no request body").end();
     }
     if (req.body.type === "folder") {
         const folderName = req.body.name;
         fs.mkdir(`${filePath}/${folderName}`, (err) => {
             console.log(folderName);
             if (err) {
-                console.log("err: ", err.message);
-                return res.status(400).send(err.message);
+                console.log("err: ", err);
+                return res.status(400).send(err).end();
             }
-            res.send("directory created");
         });
+        res.send("directory created").end();
+        next();
+        return;
     } else {
         const fileName = req.body.name;
         fs.open(`${filePath}/${fileName}`, "w", (err) => {
             if (err) {
-                console.log("err: ", err.message);
-                return res.status(400).send(err);
+                console.log("err: ", err);
+                return res.status(400).send(err).end();
             }
-            res.send("file created");
         });
+        res.send("file created").end();
+        next();
     }
 });
 
@@ -67,15 +64,15 @@ router.patch("/:username/*", (req, res) => {
     console.log("newFilePath: ", newFilePath);
     fs.rename(filePath, newFilePath, (err) => {
         if (err) {
-            console.log(err.message);
-            return res.status(404).send(err.message);
+            console.log(err);
+            return res.status(404).send(err);
         }
     });
     res.send("file updated");
 });
 
 /* DELETE method*/
-router.delete("/:username/*", async (req, res) => {
+router.delete("/:username/*", async (req, res, next) => {
     const filePath = path.normalize(`${__dirname}/../users/${req.url}`);
     console.log("filePath: ", filePath);
     if (!(await doesExist(filePath))) return res.status(404).send("does not exist");
@@ -84,20 +81,23 @@ router.delete("/:username/*", async (req, res) => {
         fs.rmdir(filePath, (err) => {
             if (err) {
                 console.log("hi");
-                console.log(err.message);
-                res.status(400).send(err.message).end();
+                console.log(err);
+                return res.status(400).send(err).end();
             }
         });
+        res.send("deleted successfully").end();
+        next()
         return;
     }
     fs.rm(filePath, (err) => {
         console.log("in file");
         if (err) {
-            console.log(err.message);
-            return res.status(404).send(err.message).end();
+            console.log(err);
+            return res.status(400).send(err).end();
         }
     });
     res.send("deleted successfully").end();
+    next();
 });
 
 module.exports = router;
