@@ -53,11 +53,11 @@ export default function Login() {
             <h1 className="inside-form">Login</h1>
             <label className="inside-form">Username:</label>
             <br />
-            <input className="inside-form" value={username} onChange={(e) => setUsername(e.target.value)} />
+            <input type="text" className="inside-form" value={username} onChange={(e) => setUsername(e.target.value)} />
             <br />
             <label className="inside-form">Password:</label>
             <br />
-            <input className="inside-form" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input type="password" className="inside-form" value={password} onChange={(e) => setPassword(e.target.value)} />
             <br />
             <button className="inside-form">Submit</button>
             <br />

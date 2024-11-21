@@ -56,15 +56,15 @@ export default function Register() {
             <h1>Sign Up</h1>
             <label>Username:</label>
             <br />
-            <input value={username} onChange={(e) => setUsername(e.target.value)} />
+            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
             <br />
             <label>Password:</label>
             <br />
-            <input value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             <br />
             <label>Verify Password:</label>
             <br />
-            <input value={verifyPassword} onChange={(e) => setVerifyPassword(e.target.value)} />
+            <input type="password" value={verifyPassword} onChange={(e) => setVerifyPassword(e.target.value)} />
             <br />
             <button>Submit</button>
             <br />
