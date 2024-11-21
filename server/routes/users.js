@@ -85,7 +85,7 @@ router.delete("/:username/*", async (req, res) => {
             if (err) {
                 console.log("hi");
                 console.log(err);
-                res.status(404).send(err).end();
+                res.status(400).send(err).end();
             }
         });
         return;
@@ -94,7 +94,7 @@ router.delete("/:username/*", async (req, res) => {
         console.log("in file");
         if (err) {
             console.log(err);
-            return res.status(404).send(err).end();
+            return res.status(400).send(err).end();
         }
     });
     res.send("deleted successfully").end();
